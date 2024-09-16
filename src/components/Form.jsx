@@ -1,83 +1,63 @@
 import { useState } from "react";
 
-export default function Form(editData){ // list with nested keys of item or update
-  let data = editData.editData
-  const [value, setValue] = useState(data);
 
-  let handleSubmit = () =>{
-    for(let i in data){
-      console.log(data[i].item)
-      data[i].update(data[i].item)
-    }
-    console.log(data.name)
+export default function Form({ editData, title, toggleEdit}){
+  const [formData, setFormData] = useState({ //temporary state to hold form data before submit
+    name: editData.name.item,
+    source: editData.source.item,
+    alt: editData.alt.item,
+    phoneNumber: editData.phoneNumber.item,
+    email: editData.email.item
+
+  })
+  const handleInputChange = (e) =>{
+    const {name, value} = e.target
+
+    setFormData({
+      ...formData,
+      [name]: value
+    })
   }
+  const handleSubmit = (e) =>{
+    e.preventDefault()
 
-  return(
-    <div>
-    <h1>Edit Header</h1>
-    <Input
-    label = 'Name:' 
-    initial={data.name.item}
-    type='text'
-    id='name'
-    className = 'menuItem'
-    updateValue = {data.name.update}
-    />
-    {/* <div className='imgContainer'>
-      <Image 
-      src={source}
-      alt={alt}
-      />
+    for(let i in editData){
+      let key = editData[i].key 
+      //iterates through list to define each key
+      
+      editData[key].update(formData[key])
+      // updateData(editData[key] = formData[key])
+      //targets the state function within list and updates.
 
-      <Input 
-      label='Image URL:'
-      initial={source}
-      type='text'
-      id='source'
-      className='menuItem'
-      updateValue={updateSource}
-      />
-
-    </div>
-    <Input 
-      label='Phone Number:'
-      initial={phoneNumber}
-      type='text'
-      id='phone'
-      className='menuItem'
-      updateValue={updatePhoneNumber}
-      /> */}
-    <button onClick={handleSubmit}>Submit</button>
-    <button onClick={() =>{data.edit.update(false)}}>Cancel</button>
-  </div>
-  )
-  function Input({ initial, id, type, className, updateValue, label, editData }){
-
-    const handleChange = (event) =>{ 
-        
-      setValue(event.target.value)
     }
+    toggleEdit(false)
+  }
+  const handleCancel = (e) =>{
+    e.preventDefault()
     
-    return (
-      <div>
-        <label htmlFor={id}>{label}</label>
-        <input
-          required
-          id={id}
-          className={className}
-          type={type}
-          value={value[id].item}
-          onChange={handleChange}
-  
-        />
-      </div>
-    )    
+    toggleEdit(false)
   }
-  
-  
+  return(
+    <form onSubmit={handleSubmit}>
+      <h1>{title}</h1>
+      <label htmlFor="name">Name:</label>
+      <input type="text" id="name" name='name' value={formData.name} onChange={handleInputChange}/>
+    
+      <label htmlFor="source">Image URL:</label>
+      <input type="text" id="source" name='source' value={formData.source} onChange={handleInputChange}/>
+
+      <label htmlFor="alt">Image Alt Text:</label>
+      <input type="text" id="alt" name='alt' value={formData.alt} onChange={handleInputChange}/>
+
+      <label htmlFor="phoneNumber">Phone Number:</label>
+      <input type="text" id="phoneNumber" name='phoneNumber' value={formData.phoneNumber} onChange={handleInputChange}/>
+
+      <label htmlFor="email">Email:</label>
+      <input type="text" id="email" name='email' value={formData.email} onChange={handleInputChange}/>
+
+      <button type="submit">Submit</button>
+      <button onClick={handleCancel}>Cancel</button>
+    </form>
+  )
+
 }
-
-
-
-
-
